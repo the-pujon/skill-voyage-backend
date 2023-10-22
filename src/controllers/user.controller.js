@@ -98,7 +98,7 @@ const getJwtToken = async (req, res) => {
   const token = jwt.sign(user, process.env.SECRET_ACCESS_TOKEN, {
     expiresIn: "5h",
   });
-  console.log(token);
+  //console.log(token);
 
   res.send({ token });
 };
