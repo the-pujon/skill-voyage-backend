@@ -1,10 +1,9 @@
 const express = require("express");
 const cors = require("cors");
-require("./src/config/db")
+require("./src/config/db");
 const userRouter = require("./src/routes/user.routes");
-const InstructorRouter = require("./src/routes/instructor.routes");
-
-
+const instructorRouter = require("./src/routes/instructor.routes");
+const classRouter = require("./src/routes/class.routes");
 
 const app = express();
 
@@ -12,14 +11,14 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use("/api/users", userRouter);
-app.use("/api/instructors", InstructorRouter);
+app.use("/api/instructors", instructorRouter);
+app.use("/api/instructors", instructorRouter);
+app.use("/api/classes", classRouter);
 
 //Home page
 app.get("/", (req, res) => {
   res.status(200).sendFile(__dirname + "/./src/view/index.html");
 });
-
-
 
 //route not found error
 app.use((req, res, next) => {
