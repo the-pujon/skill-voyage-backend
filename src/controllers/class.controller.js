@@ -1,4 +1,4 @@
-const Class = require('../models/Class');
+const Class = require('../model/class.schema');
 
 // Get all classes
 exports.getAllClasses = async (req, res) => {
@@ -78,10 +78,36 @@ exports.getClassByEmail = async (req, res) => {
 };
 
 // Get classes by category
+//exports.getClassesByCategory = async (req, res) => {
+//  try {
+//    const classes = await Class.find({ classCategory: req.params.category });
+//    res.json(classes);
+//  } catch (error) {
+//    res.status(500).json({ message: 'Error fetching classes', error: error.message });
+//  }
+//};
+
+// Get classes by category, with optional subcategory
 exports.getClassesByCategory = async (req, res) => {
+  const category = req.params.category;
+  const subcategory = req.query.subcategory;
+
   try {
-    const classes = await Class.find({ classCategory: req.params.category });
-    res.json(classes);
+    // Define a filter object based on the category
+    const filter = { classCategory: category };
+
+    if (subcategory) {
+      // If subcategory is provided, include it in the filter
+      filter.classSubcategory = subcategory;
+    }
+
+    const classes = await Class.find(filter);
+
+    if (classes.length === 0) {
+      res.status(404).json({ message: 'No classes found for the provided category and subcategory' });
+    } else {
+      res.json(classes);
+    }
   } catch (error) {
     res.status(500).json({ message: 'Error fetching classes', error: error.message });
   }

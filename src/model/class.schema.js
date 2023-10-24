@@ -32,7 +32,7 @@ const classSchema = new mongoose.Schema({
     required: true,
   },
   duration: {
-    type: Number,
+    type: String,
     required: true,
   },
   totalLessons: {
@@ -45,11 +45,10 @@ const classSchema = new mongoose.Schema({
   },
   approved: {
     type: Boolean,
-    required: true,
+    default: false,
   },
   rating: {
     type: Number,
-    required: true,
   },
   tags: {
     type: [String],
@@ -66,6 +65,13 @@ const classSchema = new mongoose.Schema({
   classCategory: {
     type: String,
     required: true,
+  },
+  classSubCategory: {
+    type: String,
+    required: true,
+  },
+  totalStudents: {
+    type: Number,
   },
 });
 

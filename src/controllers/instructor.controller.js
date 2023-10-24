@@ -48,10 +48,10 @@ exports.getSingleInstructor = async (req, res) => {
     const id = req.query.id;
     const email = req.query.email;
     let instructor;
-    console.log(id);
+    //console.log(email);
 
     if (id) instructor = await Instructor.findById(id).exec();
-    else instructor = await Instructor.findOne({ email: req.params.email });
+    else instructor = await Instructor.findOne({ email: req.query.email });
 
     if (instructor) {
       res.json(instructor);
@@ -88,7 +88,7 @@ exports.getSingleInstructor = async (req, res) => {
 // Controller for updating an instructor by email
 exports.updateInstructor = async (req, res) => {
   try {
-    console.log(req.params.email);
+    //console.log(req.params.email);
     const updatedInstructor = await Instructor.findOneAndUpdate(
       { email: req.params.email },
       req.body,

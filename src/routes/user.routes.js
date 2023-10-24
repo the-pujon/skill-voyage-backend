@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const {
   getAllUsers,
-  getSingleUsers,
+  getSingleUser,
   createUser,
   updateUser,
   deleteUser,
@@ -9,7 +9,7 @@ const {
 } = require("../controllers/user.controller");
 
 router.get("/", getAllUsers);
-router.get("/:email", getSingleUsers);
+router.get("/:email", getSingleUser);
 router.post("/", createUser);
 router.patch("/:email", updateUser);
 router.delete("/:email", deleteUser);
