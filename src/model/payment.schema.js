@@ -12,6 +12,10 @@ const paymentSchema = new mongoose.Schema({
   },
   courses: [],
   paymentStatus: {},
+  date: {
+    type: String,
+    default: Date.now
+  },
   // Add other payment-related fields as needed
 });
 
