@@ -5,6 +5,8 @@ const userRouter = require("./src/routes/user.routes");
 const instructorRouter = require("./src/routes/instructor.routes");
 const classRouter = require("./src/routes/class.routes");
 const paymentRouter = require("./src/routes/payment.routes");
+const categoryRouter = require("./src/routes/category.routes")
+
 const paymentSchema = require("./src/model/payment.schema");
 
 const app = express();
@@ -17,6 +19,7 @@ app.use("/api/instructors", instructorRouter);
 app.use("/api/instructors", instructorRouter);
 app.use("/api/courses", classRouter);
 app.use("/api/payments", paymentRouter);
+app.use("/api/categories", categoryRouter);
 
 const stripe = require("stripe")(
   "sk_test_51NIBhSHkcuY3CefPtCDm0U2OqEDR0xw4sy8FYyE0RAbMPGiywA7JZEzHHRKCIkQLQCcYbbRaknwJzrsX9SMPFtTM005QeFR5yA"
