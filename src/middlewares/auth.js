@@ -2,20 +2,26 @@ require("dotenv").config();
 var jwt = require("jsonwebtoken");
 
 const verifyJWT = (req, res, next) => {
+  console.log('here')
+  //console.log(req.headers)
   const authorization = req.headers.authorization;
+  //console.log(authorization)
   if (!authorization) {
     return res
       .status(401)
       .send({ error: true, message: "unauthorized access" });
   }
   const token = authorization.split(" ")[1];
+  console.log('token::::' ,token)
   jwt.verify(token, process.env.SECRET_ACCESS_TOKEN, (err, decoded) => {
     if (err) {
+      console.log(err)
       return res
         .status(401)
         .send({ error: true, message: "unauthorized access" });
     }
     req.decoded = decoded;
+    console.log(req.decoded)
     next();
   });
 };

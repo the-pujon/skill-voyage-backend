@@ -193,11 +193,14 @@ const deleteUser = async (req, res) => {
 
 // JWT token sending
 const getJwtToken = async (req, res) => {
+  console.log("dsdsd",req.body)
   const token = jwt.sign(req.body, process.env.SECRET_ACCESS_TOKEN, {
     expiresIn: "5h",
   });
   res.send({ token });
 };
+
+
 
 module.exports = {
   getAllUsers,

@@ -13,7 +13,7 @@ const categoryController={
             console.log(error)
             if(error.code===11000) {
             // Duplicate key error, handle accordingly
-                return res.status(400).json({error: 'Duplicate CategorySlug'});
+                return res.status(400).json({error: 'Duplicate Category Slug or CategoryName'});
             }
             // Other error, handle accordingly
             return res.status(500).json({error: 'Internal Server Error'});
@@ -75,94 +75,7 @@ const categoryController={
         }
     },
 
-    //createSubCategory: async (req,res) => {
-    //    console.log(req.body)
-    //    console.log(req.params)
-    //    try {
-    //        const category = await Category.findById(req.params.categoryId);
-    //        console.log(category)
-    //        if (!category) {
-    //            return res.status(404).json({ error: 'Category not found' });
-    //        }
-    //        //
-    //       const s = category.subcategory.push(req.body);
-    //       console.log("s",category)
-    //       const p =  await category.save();
-    //       console.log('p',p)
-    //        res.status(201).json(category.subcategory[category.subcategory.length - 1]);
-    //    } catch (error) {
-    //        console.log(error)
-    //        res.status(500).json({ error: 'Internal Server Error' });
-    //    }
-    //},
 
-    //createSubCategory: async (req, res) => {
-    //    console.log(req.body);
-    //    console.log(req.params);
-    //    try {
-    //        const category = await Category.findById(req.params.categoryId);
-    //        console.log(category);
-    //        if (!category) {
-    //            return res.status(404).json({ error: 'Category not found' });
-    //        }
-
-    //        // Create a new subcategory object
-    //        const newSubCategory = {
-    //            SubCategoryName: req.body.SubCategoryName || null,
-    //            SubCategorySlug: req.body.SubCategorySlug || null,
-    //        };
-
-    //        // Push the new subcategory object into the subcategory array
-    //        category.subcategory.push(newSubCategory);
-
-    //        // Save the category to the database
-    //        await category.save();
-
-    //        res.status(201).json(newSubCategory);
-    //    } catch (error) {
-    //        console.log(error);
-    //        res.status(500).json({ error: 'Internal Server Error' });
-    //    }
-    //},
-
-    //createSubCategory: async (req, res) => {
-    //    console.log(req.body);
-    //    console.log(req.params);
-    //    try {
-    //        const category = await Category.findById(req.params.categoryId);
-    //        console.log(category);
-    //        if (!category) {
-    //            return res.status(404).json({ error: 'Category not found' });
-    //        }
-
-    //        // Create a new subcategory object
-    //        const newSubCategory = {
-    //            SubCategoryName: req.body.SubCategoryName || null,
-    //            SubCategorySlug: req.body.SubCategorySlug || null,
-    //        };
-
-    //        // Push the new subcategory object into the subcategory array
-    //        category.subcategory.push(newSubCategory);
-
-    //        try {
-    //            // Save the category to the database
-    //            await category.save();
-    //        } catch (error) {
-    //            console.log(error)
-    //            if (error.code === 11000) {
-    //                // Duplicate key error, handle accordingly
-    //                return res.status(400).json({ error: 'Duplicate SubCategorySlug' });
-    //            }
-    //            // Other error, handle accordingly
-    //            return res.status(500).json({ error: 'Internal Server Error' });
-    //        }
-
-    //        res.status(201).json(newSubCategory);
-    //    } catch (error) {
-    //        console.log(error);
-    //        res.status(500).json({ error: 'Internal Server Error' });
-    //    }
-    //},
     createSubCategory: async (req,res) => {
         console.log(req.body);
         console.log(req.params);
@@ -176,10 +89,12 @@ const categoryController={
             // Check for duplicate subcategory slug
             const isDuplicateSlug=category.subcategory.some(
                 (sub) => sub.SubCategorySlug===req.body.SubCategorySlug
-            );
+            ) || category.subcategory.some(
+                (sub) => sub.SubCategoryName===req.body.SubCategoryName
+            )
 
             if(isDuplicateSlug) {
-                return res.status(400).json({error: 'Duplicate SubCategorySlug'});
+                return res.status(400).json({error: 'Duplicate Subcategory Slug or Subcategory Name'});
             }
 
             // Create a new subcategory object

@@ -16,10 +16,21 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use("/api/users", userRouter);
 app.use("/api/instructors", instructorRouter);
-app.use("/api/instructors", instructorRouter);
+//app.use("/api/instructors", instructorRouter);
 app.use("/api/courses", classRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/categories", categoryRouter);
+
+const {verifyJWT} = require('./src/middlewares/auth')
+
+
+
+app.get("/jwt", async (req, res) => {
+  console.log(req.headers)
+
+  res.send('here');
+});
+
 
 const stripe = require("stripe")(
   "sk_test_51NIBhSHkcuY3CefPtCDm0U2OqEDR0xw4sy8FYyE0RAbMPGiywA7JZEzHHRKCIkQLQCcYbbRaknwJzrsX9SMPFtTM005QeFR5yA"
