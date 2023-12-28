@@ -7,10 +7,12 @@ const {
   getPaymentsByEmail,
 } = require("../controllers/payment.controller");
 
+const {verifyAdmin, verifyJWT} = require('../middlewares/auth')
+
 // Define routes
-router.get("/", getAllPayments);
-router.get("/:email", getPaymentsByEmail);
-router.post("/", createPayment);
+router.get("/",verifyJWT, getAllPayments);
+router.get("/:email",verifyJWT, getPaymentsByEmail);
+router.post("/",verifyJWT, createPayment);
 
 // Export the router
 module.exports = router;
