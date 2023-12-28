@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const categoryController = require('../controllers/category.controller');
 
+const {verifyAdmin, verifyJWT} = require('../middlewares/auth')
+
 // Create Category
-router.post('/', categoryController.createCategory);
+router.post('/',verifyJWT, categoryController.createCategory);
 
 // Get All Categories
 router.get('/', categoryController.getAllCategories);
@@ -12,13 +14,13 @@ router.get('/', categoryController.getAllCategories);
 router.get('/:categoryId', categoryController.getCategoryById);
 
 // Update Category by ID
-router.put('/:categoryId', categoryController.updateCategoryById);
+router.put('/:categoryId',verifyJWT, categoryController.updateCategoryById);
 
 // Delete Category by ID
-router.delete('/:categoryId', categoryController.deleteCategoryById);
+router.delete('/:categoryId',verifyJWT, categoryController.deleteCategoryById);
 
 // Create SubCategory
-router.post('/:categoryId/subcategories', categoryController.createSubCategory);
+router.post('/:categoryId/subcategories',verifyJWT, categoryController.createSubCategory);
 
 // Get All SubCategories of a Category
 router.get('/:categoryId/subcategories', categoryController.getAllSubCategories);
@@ -27,9 +29,9 @@ router.get('/:categoryId/subcategories', categoryController.getAllSubCategories)
 router.get('/:categoryId/subcategories/:subcategoryId', categoryController.getSubCategoryById);
 
 // Update SubCategory by ID
-router.put('/:categoryId/subcategories/:subcategoryId', categoryController.updateSubCategoryById);
+router.put('/:categoryId/subcategories/:subcategoryId',verifyJWT, categoryController.updateSubCategoryById);
 
 // Delete SubCategory by ID
-router.delete('/:categoryId/subcategories/:subcategoryId', categoryController.deleteSubCategoryById);
+router.delete('/:categoryId/subcategories/:subcategoryId',verifyJWT, categoryController.deleteSubCategoryById);
 
 module.exports = router;
