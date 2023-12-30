@@ -1,5 +1,6 @@
 require("dotenv").config();
 var jwt = require("jsonwebtoken");
+const userCollection = require("../model/user.schema");
 
 const verifyJWT = (req, res, next) => {
   console.log('here')
@@ -28,9 +29,13 @@ const verifyJWT = (req, res, next) => {
 
 //middleware for admin verify
 const verifyAdmin = async (req, res, next) => {
+  console.log("admin verify")
   email = req.decoded.email;
+  console.log("email",email)
   const query = { email: email };
+  console.log('query', query)
   const user = await userCollection.findOne(query);
+  console.log("user", user)
   if (user?.role !== "admin") {
     return res.status(403).send({ error: true, message: "forbidden access" });
   }
