@@ -8,10 +8,10 @@ const {
   getJwtToken,
 } = require("../controllers/user.controller");
 
-const {verifyAdmin, verifyJWT} = require('../middlewares/auth')
+const {verifyAdmin, verifyJWT, verifyInstructor} = require('../middlewares/auth')
 
 router.get("/", verifyJWT, getAllUsers);
-router.get("/:email",verifyJWT,verifyAdmin, getSingleUser);
+router.get("/:email",verifyJWT,verifyInstructor, getSingleUser);
 router.post("/", createUser);
 router.patch("/:email",verifyJWT, updateUser);
 router.delete("/:email", verifyJWT, deleteUser);
