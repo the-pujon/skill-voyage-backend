@@ -11,10 +11,10 @@ const {
 const {verifyAdmin, verifyJWT, verifyInstructor} = require('../middlewares/auth')
 
 router.get("/", verifyJWT, getAllUsers);
-router.get("/:email",verifyJWT,verifyInstructor, getSingleUser);
+router.get("/:email",verifyJWT, getSingleUser);
 router.post("/", createUser);
-router.patch("/:email",verifyJWT, updateUser);
-router.delete("/:email", verifyJWT, deleteUser);
+router.patch("/:email",verifyJWT, verifyAdmin, updateUser);
+router.delete("/:email", verifyJWT,verifyAdmin, deleteUser);
 router.post("/jwt", getJwtToken);
 
 module.exports = router;
