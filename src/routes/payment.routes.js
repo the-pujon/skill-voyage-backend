@@ -10,7 +10,7 @@ const {
 const {verifyAdmin, verifyJWT} = require('../middlewares/auth')
 
 // Define routes
-router.get("/",verifyJWT, getAllPayments);
+router.get("/",verifyJWT,verifyAdmin, getAllPayments);
 router.get("/:email",verifyJWT, getPaymentsByEmail);
 router.post("/",verifyJWT, createPayment);
 
