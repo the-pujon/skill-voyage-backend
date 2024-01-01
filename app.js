@@ -11,19 +11,14 @@ const bodyParser = require('body-parser');
 const paymentSchema = require("./src/model/payment.schema");
 
 const app = express();
-
 const corsOptions = {
   origin: 'http://localhost:5173',
-  credentials: true, // if you're using cookies or authentication
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204,
 };
 
-//app.use(cors(corsOptions));
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true,
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  optionsSuccessStatus: 204,
-}));
+app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use("/api/users", userRouter);
