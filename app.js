@@ -12,7 +12,18 @@ const paymentSchema = require("./src/model/payment.schema");
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: 'http://localhost:5173',
+  credentials: true, // if you're using cookies or authentication
+};
+
+//app.use(cors(corsOptions));
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  optionsSuccessStatus: 204,
+}));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use("/api/users", userRouter);
@@ -39,6 +50,10 @@ const stripe = require("stripe")(
 
 // checkout api
 app.post("/api/checkout", async (req, res) => {
+
+  res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.header('Access-Control-Allow-Credentials', true);
+
   const { email, paymentStatus, products, totalItem, totalPrice:total } = req.body;
 
   console.log(req.body.products)
