@@ -38,11 +38,12 @@ const stripe = require("stripe")(
 
 // checkout api
 app.post("/api/checkout", async (req, res) => {
-  const { email, paymentStatus, products } = req.body;
+  const { email, paymentStatus, products, totalItem, totalPrice:total } = req.body;
 
-  const total = products.totalPrice + products.totalPrice * 0.1;
+  console.log(req.body.products)
 
-  const lineItems = products.courses.map((product) => ({
+
+  const lineItems = products.map((product) => ({
     price_data: {
       currency: "USD",
       product_data: {
@@ -51,7 +52,7 @@ app.post("/api/checkout", async (req, res) => {
       },
       unit_amount: parseInt(total * 100),
     },
-    quantity: products.totalItem,
+    quantity: totalItem,
   }));
 
   const session = await stripe.checkout.sessions.create({
@@ -62,20 +63,20 @@ app.post("/api/checkout", async (req, res) => {
     cancel_url: "http://localhost:5173",
   });
 
-  const transaction = new paymentSchema({
-    sessionId: session.id,
-    email,
-    paymentStatus,
-    courses: products.courses,
-  });
-  await transaction.save();
+  //const transaction = new paymentSchema({
+  //  sessionId: session.id,
+  //  email,
+  //  paymentStatus,
+  //  courses: products,
+  //});
+  //await transaction.save();
 
   //res.json({ sessionId: session.id });
 
   res.json({ id: session.id });
 });
 const endpointSecret = ' whsec_9638c6781b1bf11b3e63132c40d44f151d313c2186572d1bbede46f25ee54c99';
-app.post('/webhook', express.raw({type: 'application/json'}), (request, response) => {
+app.post('/webhook', express.raw({type: 'application/json'}),async (request, response) => {
   console.log('here')
   let event = request.body;
   // Only verify the event if you have an endpoint secret defined.
@@ -103,6 +104,9 @@ app.post('/webhook', express.raw({type: 'application/json'}), (request, response
     case 'payment_intent.succeeded':
       console.log("done")
       const paymentIntent = event.data.object;
+
+      await handlePaymentIntentSucceeded(paymentIntent);
+
       console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
       // Then define and call a method to handle the successful payment intent.
       // handlePaymentIntentSucceeded(paymentIntent);
@@ -120,6 +124,25 @@ app.post('/webhook', express.raw({type: 'application/json'}), (request, response
   // Return a 200 response to acknowledge receipt of the event
   response.send();
 });
+
+
+async function handlePaymentIntentSucceeded(paymentIntent) {
+  const { email, paymentStatus, products, totalItem, totalPrice:total } = paymentIntent.metadata; // Assuming you added metadata to the paymentIntent
+
+  // Save payment information to the database
+  const transaction = new paymentSchema({
+    sessionId: paymentIntent.id,
+    email,
+    paymentStatus: "succeeded",
+    courses: products,
+    totalAmount:total
+  });
+
+  await transaction.save();
+
+  console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
+}
+
 
 //Home page
 app.get("/", (req, res) => {

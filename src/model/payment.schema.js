@@ -12,7 +12,7 @@ const paymentSchema = new mongoose.Schema({
   },
   totalAmount: {
     type: mongoose.Schema.Types.Mixed, // or specify String/Number based on your requirements
-    required: true,
+    required: false,
   },
   courses: [],
   paymentStatus: {},
