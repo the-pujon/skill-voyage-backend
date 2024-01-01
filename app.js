@@ -147,27 +147,43 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
   console.log('here');
   console.log(request.body)
 
-  let event;
-  // Only verify the event if you have an endpoint secret defined.
-  // Otherwise use the basic event deserialized with JSON.parse
-  if (endpointSecret) {
-    // Get the signature sent by Stripe
-    const signature = request.headers['stripe-signature'];
-    console.log(signature, 'dfs');
-    try {
-      // Parse the raw body manually
-      const rawBody = request.body;
-      event = stripe.webhooks.constructEvent(
-        rawBody,
-        signature,
-        endpointSecret
-      );
-      console.log(event);
-    } catch (err) {
-      console.log(`⚠️  Webhook signature verification failed.`, err.message);
-      return response.sendStatus(400);
-    }
-  }
+  const payload = {
+    id: 'evt_3OTp5dHkcuY3CefP0yxL006Q',
+    object: 'event',
+  };
+
+  const payloadString = JSON.stringify(payload, null, 2);
+  const secret = 'whsec_hzNvPm8XLBGPV2KJ9fo9e9H8KfmvOMyG';
+
+  const header = stripe.webhooks.generateTestHeaderString({
+    payload: payloadString,
+    secret,
+  });
+
+  const event = stripe.webhooks.constructEvent(payloadString, header, secret);
+
+
+  //let event;
+  //// Only verify the event if you have an endpoint secret defined.
+  //// Otherwise use the basic event deserialized with JSON.parse
+  //if (endpointSecret) {
+  //  // Get the signature sent by Stripe
+  //  const signature = request.headers['stripe-signature'];
+  //  console.log(signature, 'dfs');
+  //  try {
+  //    // Parse the raw body manually
+  //    const rawBody = request.body;
+  //    event = stripe.webhooks.constructEvent(
+  //      rawBody,
+  //      signature,
+  //      endpointSecret
+  //    );
+  //    console.log(event);
+  //  } catch (err) {
+  //    console.log(`⚠️  Webhook signature verification failed.`, err.message);
+  //    return response.sendStatus(400);
+  //  }
+  //}
 
   // Handle the event
   switch (event.type) {
