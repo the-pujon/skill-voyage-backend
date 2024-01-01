@@ -163,14 +163,22 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
       switch (event.object) {
         case 'checkout.session':
           const checkoutSessionCompleted = event;
+
+          console.log('checkout.session')
+          console.log(checkoutSessionCompleted)
           // Handle the event as needed
           break;
         case 'payment_intent':
           const paymentIntent = event;
+
+          console.log('payment_intent')
+          console.log(paymentIntent)
           // Handle the event as needed
           break;
         case 'payment_method':
           const paymentMethod = event;
+          console.log('payment_method')
+          console.log(paymentMethod)
           // Handle the event as needed
           break;
         default:
