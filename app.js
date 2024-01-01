@@ -166,6 +166,7 @@ console.log('Signature Header:', header);
   const event = stripe.webhooks.constructEvent(payloadString, header, secret);
 
   console.log(event)
+  console.log('Full Event:', JSON.stringify(event, null, 2));
 
 
   //let event;
