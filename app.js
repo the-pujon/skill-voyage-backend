@@ -6,6 +6,7 @@ const instructorRouter = require("./src/routes/instructor.routes");
 const classRouter = require("./src/routes/class.routes");
 const paymentRouter = require("./src/routes/payment.routes");
 const categoryRouter = require("./src/routes/category.routes")
+const bodyParser = require('body-parser');
 
 const paymentSchema = require("./src/model/payment.schema");
 
@@ -50,9 +51,10 @@ app.post("/api/checkout", async (req, res) => {
         name: product.name,
         images: [product.classImage],
       },
-      unit_amount: parseInt(total * 100),
+      unit_amount: parseInt((product.price + product.price * 0.1) * 100) ,
     },
-    quantity: totalItem,
+
+    quantity: 1,
   }));
 
   const session = await stripe.checkout.sessions.create({
@@ -63,36 +65,94 @@ app.post("/api/checkout", async (req, res) => {
     cancel_url: "http://localhost:5173",
   });
 
-  //const transaction = new paymentSchema({
-  //  sessionId: session.id,
-  //  email,
-  //  paymentStatus,
-  //  courses: products,
-  //});
-  //await transaction.save();
+  const transaction = new paymentSchema({
+    sessionId: session.id,
+    email,
+    paymentStatus,
+    courses: products,
+  });
+  await transaction.save();
 
-  //res.json({ sessionId: session.id });
+  res.json({ sessionId: session.id });
 
   res.json({ id: session.id });
 });
-const endpointSecret = ' whsec_9638c6781b1bf11b3e63132c40d44f151d313c2186572d1bbede46f25ee54c99';
-app.post('/webhook', express.raw({type: 'application/json'}),async (request, response) => {
-  console.log('here')
-  let event = request.body;
+//const endpointSecret = 'whsec_9638c6781b1bf11b3e63132c40d44f151d313c2186572d1bbede46f25ee54c99';
+//app.post('/webhook', express.raw({type: 'application/json'}),async (request, response) => {
+//  console.log('here')
+//  let event = request.body;
+//  // Only verify the event if you have an endpoint secret defined.
+//  // Otherwise use the basic event deserialized with JSON.parse
+//  if (endpointSecret) {
+//    // Get the signature sent by Stripe
+//    const signature = request.headers['stripe-signature'];
+//    console.log(signature,'dfs')
+//    try {
+//      console.log('here')
+//      event = stripe.webhooks.constructEvent(
+//        request.body,
+//        signature,
+//        endpointSecret
+//      );
+//      console.log(event)
+//    } catch (err) {
+//      console.log(`⚠️  Webhook signature verification failed.`, err.message);
+//      return response.sendStatus(400);
+//    }
+//  }
+
+//  // Handle the event
+//  switch (event.type) {
+//    case 'checkout.session.completed':
+//      const checkoutSessionCompleted = event.data.object;
+//      await handlePaymentIntentSucceeded(checkoutSessionCompleted);
+//      // Then define and call a function to handle the event checkout.session.completed
+//      break;
+//    case 'payment_intent.succeeded':
+//      console.log("done")
+//      const paymentIntent = event.data.object;
+
+//      await handlePaymentIntentSucceeded(paymentIntent);
+
+//      console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
+//      // Then define and call a method to handle the successful payment intent.
+//      // handlePaymentIntentSucceeded(paymentIntent);
+//      break;
+//    case 'payment_method.attached':
+//      const paymentMethod = event.data.object;
+//      // Then define and call a method to handle the successful attachment of a PaymentMethod.
+//      // handlePaymentMethodAttached(paymentMethod);
+//      break;
+//    default:
+//      // Unexpected event type
+//      console.log(`Unhandled event type ${event.type}.`);
+//  }
+
+//  // Return a 200 response to acknowledge receipt of the event
+//  response.send();
+//});
+
+const endpointSecret = 'whsec_hzNvPm8XLBGPV2KJ9fo9e9H8KfmvOMyG';
+app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (request, response) => {
+  console.log('here');
+  console.log(request.body)
+
+  let event;
   // Only verify the event if you have an endpoint secret defined.
   // Otherwise use the basic event deserialized with JSON.parse
   if (endpointSecret) {
     // Get the signature sent by Stripe
     const signature = request.headers['stripe-signature'];
-    console.log(signature,'dfs')
+    console.log(signature, 'dfs');
     try {
-      console.log('here')
+      // Parse the raw body manually
+      const rawBody = request.body;
       event = stripe.webhooks.constructEvent(
-        request.body,
+        rawBody,
         signature,
         endpointSecret
       );
-      console.log(event)
+      console.log(event);
     } catch (err) {
       console.log(`⚠️  Webhook signature verification failed.`, err.message);
       return response.sendStatus(400);
@@ -101,11 +161,20 @@ app.post('/webhook', express.raw({type: 'application/json'}),async (request, res
 
   // Handle the event
   switch (event.type) {
+    case 'checkout.session.completed':
+      const checkoutSessionCompleted = event.data.object;
+      //await handlePaymentIntentSucceeded(checkoutSessionCompleted);
+      // Then define and call a function to handle the event checkout.session.completed
+      break;
     case 'payment_intent.succeeded':
-      console.log("done")
+      console.log("done");
       const paymentIntent = event.data.object;
 
-      await handlePaymentIntentSucceeded(paymentIntent);
+      //await handlePaymentIntentSucceeded(paymentIntent);
+      await paymentSchema.findOneAndUpdate(
+        { sessionId: paymentIntent.id },
+        { $set: { paymentStatus: "success" } }
+      );
 
       console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
       // Then define and call a method to handle the successful payment intent.
