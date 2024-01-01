@@ -147,7 +147,7 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
   console.log('here');
   console.log(request.body)
 
-  app.post('/webhook', async (request, response) => {
+  //app.post('/webhook', async (request, response) => {
     const payload = request.body;
     const sigHeader = request.headers['stripe-signature'];
 
@@ -192,7 +192,7 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
       console.error('Error verifying webhook signature:', err.message);
       response.status(400).send('Webhook Error: Invalid signature');
     }
-  });
+
 
 
 //  const payload = {
