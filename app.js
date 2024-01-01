@@ -162,6 +162,8 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
 
   const event = stripe.webhooks.constructEvent(payloadString, header, secret);
 
+  console.log(event)
+
 
   //let event;
   //// Only verify the event if you have an endpoint secret defined.
