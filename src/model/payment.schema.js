@@ -10,6 +10,10 @@ const paymentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  totalAmount: {
+    type: mongoose.Schema.Types.Mixed, // or specify String/Number based on your requirements
+    required: true,
+  },
   courses: [],
   paymentStatus: {},
   date: {

@@ -46,9 +46,7 @@ exports.addInstructor = async (req, res) => {
 exports.getSingleInstructor = async (req, res) => {
   try {
     const id = req.query.id;
-    const email = req.query.email;
     let instructor;
-    //console.log(email);
 
     if (id) instructor = await Instructor.findById(id).exec();
     else instructor = await Instructor.findOne({ email: req.query.email });
@@ -65,30 +63,9 @@ exports.getSingleInstructor = async (req, res) => {
   }
 };
 
-// Controller for getting an instructor by email
-//exports.getInstructorById = async (req, res) => {
-//  try {
-//    const id = req.params.id;
-//    console.log(id);
-//    const instructor = await Instructor.findById(id).exec();
-//    //const  = await Instructor.findById({ _id: req.params.id });
-//    console.log(instructor);
-//    if (instructor) {
-//      res.json(instructor);
-//    } else {
-//      res.status(404).json({ message: "Instructor not found" });
-//    }
-//  } catch (error) {
-//    res
-//      .status(500)
-//      .json({ message: "Error fetching instructor", error: error.message });
-//  }
-//};
-
 // Controller for updating an instructor by email
 exports.updateInstructor = async (req, res) => {
   try {
-    //console.log(req.params.email);
     const updatedInstructor = await Instructor.findOneAndUpdate(
       { email: req.params.email },
       req.body,

@@ -87,7 +87,6 @@ exports.getClassByEmail = async (req, res) => {
       res.json(classes);
     }
   } catch (error) {
-    console.log('here')
     res
       .status(500)
       .json({ message: "Error fetching class", error: error.message });

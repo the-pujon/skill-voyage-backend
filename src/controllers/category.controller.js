@@ -5,12 +5,10 @@ const categoryController={
      * for create category
      */
     createCategory: async (req,res) => {
-        console.log(req.body)
         try {
             const newCategory=await Category.create(req.body);
             res.status(201).json(newCategory);
         } catch(error) {
-            console.log(error)
             if(error.code===11000) {
             // Duplicate key error, handle accordingly
                 return res.status(400).json({error: 'Duplicate Category Slug or CategoryName'});
