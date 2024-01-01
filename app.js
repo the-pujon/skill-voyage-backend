@@ -160,6 +160,9 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
     secret,
   });
 
+  console.log('Payload:', payload);
+console.log('Signature Header:', header);
+
   const event = stripe.webhooks.constructEvent(payloadString, header, secret);
 
   console.log(event)
