@@ -147,26 +147,66 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
   console.log('here');
   console.log(request.body)
 
-  const payload = {
-    id: 'evt_3OTp5dHkcuY3CefP0yxL006Q',
-    object: 'event',
-  };
+  app.post('/webhook', async (request, response) => {
+    const payload = request.body;
+    const sigHeader = request.headers['stripe-signature'];
 
-  const payloadString = JSON.stringify(payload, null, 2);
-  const secret = 'whsec_hzNvPm8XLBGPV2KJ9fo9e9H8KfmvOMyG';
+    console.log('Payload:', payload);
+    console.log('Signature Header:', sigHeader);
 
-  const header = stripe.webhooks.generateTestHeaderString({
-    payload: payloadString,
-    secret,
+    try {
+      const event = stripe.webhooks.constructEvent(payload, sigHeader, endpointSecret);
+
+      console.log('Full Event:', JSON.stringify(event, null, 2));
+
+      // Handle the event
+      switch (event.object) {
+        case 'checkout.session':
+          const checkoutSessionCompleted = event;
+          // Handle the event as needed
+          break;
+        case 'payment_intent':
+          const paymentIntent = event;
+          // Handle the event as needed
+          break;
+        case 'payment_method':
+          const paymentMethod = event;
+          // Handle the event as needed
+          break;
+        default:
+          // Unexpected event type
+          console.log(`Unhandled event type ${event.object}.`);
+      }
+
+      // Return a 200 response to acknowledge receipt of the event
+      response.status(200).send();
+    } catch (err) {
+      console.error('Error verifying webhook signature:', err.message);
+      response.status(400).send('Webhook Error: Invalid signature');
+    }
   });
 
-  console.log('Payload:', payload);
-console.log('Signature Header:', header);
 
-  const event = stripe.webhooks.constructEvent(payloadString, header, secret);
+//  const payload = {
+//    id: 'evt_3OTp5dHkcuY3CefP0yxL006Q',
+//    object: 'event',
+//  };
 
-  console.log(event)
-  console.log('Full Event:', JSON.stringify(event, null, 2));
+//  const payloadString = JSON.stringify(payload, null, 2);
+//  const secret = 'whsec_hzNvPm8XLBGPV2KJ9fo9e9H8KfmvOMyG';
+
+//  const header = stripe.webhooks.generateTestHeaderString({
+//    payload: payloadString,
+//    secret,
+//  });
+
+//  console.log('Payload:', payload);
+//console.log('Signature Header:', header);
+
+//  const event = stripe.webhooks.constructEvent(payloadString, header, secret);
+
+//  console.log(event)
+//  console.log('Full Event:', JSON.stringify(event, null, 2));
 
 
   //let event;
@@ -222,23 +262,23 @@ console.log('Signature Header:', header);
   //    console.log(`Unhandled event type ${event.type}.`);
   //}
 
-  switch (event.object) {
-    case 'checkout.session':
-      const checkoutSessionCompleted = event;
-      // Handle the event as needed
-      break;
-    case 'payment_intent':
-      const paymentIntent = event;
-      // Handle the event as needed
-      break;
-    case 'payment_method':
-      const paymentMethod = event;
-      // Handle the event as needed
-      break;
-    default:
-      // Unexpected event type
-      console.log(`Unhandled event type ${event.object}.`);
-  }
+  //switch (event.object) {
+  //  case 'checkout.session':
+  //    const checkoutSessionCompleted = event;
+  //    // Handle the event as needed
+  //    break;
+  //  case 'payment_intent':
+  //    const paymentIntent = event;
+  //    // Handle the event as needed
+  //    break;
+  //  case 'payment_method':
+  //    const paymentMethod = event;
+  //    // Handle the event as needed
+  //    break;
+  //  default:
+  //    // Unexpected event type
+  //    console.log(`Unhandled event type ${event.object}.`);
+  //}
 
   // Return a 200 response to acknowledge receipt of the event
   response.send();
