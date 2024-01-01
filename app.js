@@ -20,7 +20,16 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+//app.use((req, res, next) => {
+//  if (req.originalUrl === "/webhook") {
+//      next(); // Do nothing with the body because I need it in a raw state.
+//  } else {
+//      express.json()(req, res, next); // ONLY do express.json() if the received request is NOT a WebHook from Stripe.
+//  }
+//});
+
+app.use(require('body-parser').text({ type: "*/*" }));
+
 app.use("/api/users", userRouter);
 app.use("/api/instructors", instructorRouter);
 //app.use("/api/instructors", instructorRouter);
@@ -28,15 +37,6 @@ app.use("/api/courses", classRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/categories", categoryRouter);
 
-const {verifyJWT} = require('./src/middlewares/auth')
-
-
-
-app.get("/jwt", async (req, res) => {
-  console.log(req.headers)
-
-  res.send('here');
-});
 
 
 const stripe = require("stripe")(
@@ -87,104 +87,28 @@ app.post("/api/checkout", async (req, res) => {
 
   res.json({ id: session.id });
 });
-//const endpointSecret = 'whsec_9638c6781b1bf11b3e63132c40d44f151d313c2186572d1bbede46f25ee54c99';
-//app.post('/webhook', express.raw({type: 'application/json'}),async (request, response) => {
-//  console.log('here')
-//  let event = request.body;
-//  // Only verify the event if you have an endpoint secret defined.
-//  // Otherwise use the basic event deserialized with JSON.parse
-//  if (endpointSecret) {
-//    // Get the signature sent by Stripe
-//    const signature = request.headers['stripe-signature'];
-//    console.log(signature,'dfs')
-//    try {
-//      console.log('here')
-//      event = stripe.webhooks.constructEvent(
-//        request.body,
-//        signature,
-//        endpointSecret
-//      );
-//      console.log(event)
-//    } catch (err) {
-//      console.log(`⚠️  Webhook signature verification failed.`, err.message);
-//      return response.sendStatus(400);
-//    }
-//  }
 
-//  // Handle the event
-//  switch (event.type) {
-//    case 'checkout.session.completed':
-//      const checkoutSessionCompleted = event.data.object;
-//      await handlePaymentIntentSucceeded(checkoutSessionCompleted);
-//      // Then define and call a function to handle the event checkout.session.completed
-//      break;
-//    case 'payment_intent.succeeded':
-//      console.log("done")
-//      const paymentIntent = event.data.object;
-
-//      await handlePaymentIntentSucceeded(paymentIntent);
-
-//      console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
-//      // Then define and call a method to handle the successful payment intent.
-//      // handlePaymentIntentSucceeded(paymentIntent);
-//      break;
-//    case 'payment_method.attached':
-//      const paymentMethod = event.data.object;
-//      // Then define and call a method to handle the successful attachment of a PaymentMethod.
-//      // handlePaymentMethodAttached(paymentMethod);
-//      break;
-//    default:
-//      // Unexpected event type
-//      console.log(`Unhandled event type ${event.type}.`);
-//  }
-
-//  // Return a 200 response to acknowledge receipt of the event
-//  response.send();
-//});
 
 const endpointSecret = 'whsec_hzNvPm8XLBGPV2KJ9fo9e9H8KfmvOMyG';
 app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (request, response) => {
-  console.log('here');
-  console.log(request.body)
 
-  //app.post('/webhook', async (request, response) => {
-    const payload = request.body;
-    const sigHeader = request.headers['stripe-signature'];
+    const payload = request.body
+    const sig = request.headers['stripe-signature']
+    const payloadString = JSON.stringify(payload, null, 2);
+    const secret = 'whsec_hzNvPm8XLBGPV2KJ9fo9e9H8KfmvOMyG';
+    const header = stripe.webhooks.generateTestHeaderString({
+            payload: payloadString,
+            secret,
+    });
 
-    console.log('Payload:', payload);
-    console.log('Signature Header:', sigHeader);
 
     try {
-      const event = stripe.webhooks.constructEvent(payload, sigHeader, endpointSecret);
+      const event = stripe.webhooks.constructEvent(payloadString, header, secret);
+      console.log('event', event)
 
-      console.log('Full Event:', JSON.stringify(event, null, 2));
+      //console.log(event.type)
 
-      // Handle the event
-      switch (event.object) {
-        case 'checkout.session':
-          const checkoutSessionCompleted = event;
 
-          console.log('checkout.session')
-          console.log(checkoutSessionCompleted)
-          // Handle the event as needed
-          break;
-        case 'payment_intent':
-          const paymentIntent = event;
-
-          console.log('payment_intent')
-          console.log(paymentIntent)
-          // Handle the event as needed
-          break;
-        case 'payment_method':
-          const paymentMethod = event;
-          console.log('payment_method')
-          console.log(paymentMethod)
-          // Handle the event as needed
-          break;
-        default:
-          // Unexpected event type
-          console.log(`Unhandled event type ${event.object}.`);
-      }
 
       // Return a 200 response to acknowledge receipt of the event
       response.status(200).send();
@@ -293,22 +217,22 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
 });
 
 
-async function handlePaymentIntentSucceeded(paymentIntent) {
-  const { email, paymentStatus, products, totalItem, totalPrice:total } = paymentIntent.metadata; // Assuming you added metadata to the paymentIntent
+//async function handlePaymentIntentSucceeded(paymentIntent) {
+//  const { email, paymentStatus, products, totalItem, totalPrice:total } = paymentIntent.metadata; // Assuming you added metadata to the paymentIntent
 
-  // Save payment information to the database
-  const transaction = new paymentSchema({
-    sessionId: paymentIntent.id,
-    email,
-    paymentStatus: "succeeded",
-    courses: products,
-    totalAmount:total
-  });
+//  // Save payment information to the database
+//  const transaction = new paymentSchema({
+//    sessionId: paymentIntent.id,
+//    email,
+//    paymentStatus: "succeeded",
+//    courses: products,
+//    totalAmount:total
+//  });
 
-  await transaction.save();
+//  await transaction.save();
 
-  console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
-}
+//  console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
+//}
 
 
 //Home page
