@@ -192,34 +192,52 @@ console.log('Signature Header:', header);
   //}
 
   // Handle the event
-  switch (event.type) {
-    case 'checkout.session.completed':
-      const checkoutSessionCompleted = event.data.object;
-      //await handlePaymentIntentSucceeded(checkoutSessionCompleted);
-      // Then define and call a function to handle the event checkout.session.completed
-      break;
-    case 'payment_intent.succeeded':
-      console.log("done");
-      const paymentIntent = event.data.object;
+  //switch (event.type) {
+  //  case 'checkout.session.completed':
+  //    const checkoutSessionCompleted = event.data.object;
+  //    //await handlePaymentIntentSucceeded(checkoutSessionCompleted);
+  //    // Then define and call a function to handle the event checkout.session.completed
+  //    break;
+  //  case 'payment_intent.succeeded':
+  //    console.log("done");
+  //    const paymentIntent = event.data.object;
 
-      //await handlePaymentIntentSucceeded(paymentIntent);
-      //await paymentSchema.findOneAndUpdate(
-      //  { sessionId: paymentIntent.id },
-      //  { $set: { paymentStatus: "success" } }
-      //);
+  //    //await handlePaymentIntentSucceeded(paymentIntent);
+  //    //await paymentSchema.findOneAndUpdate(
+  //    //  { sessionId: paymentIntent.id },
+  //    //  { $set: { paymentStatus: "success" } }
+  //    //);
 
-      console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
-      // Then define and call a method to handle the successful payment intent.
-      // handlePaymentIntentSucceeded(paymentIntent);
+  //    console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
+  //    // Then define and call a method to handle the successful payment intent.
+  //    // handlePaymentIntentSucceeded(paymentIntent);
+  //    break;
+  //  case 'payment_method.attached':
+  //    const paymentMethod = event.data.object;
+  //    // Then define and call a method to handle the successful attachment of a PaymentMethod.
+  //    // handlePaymentMethodAttached(paymentMethod);
+  //    break;
+  //  default:
+  //    // Unexpected event type
+  //    console.log(`Unhandled event type ${event.type}.`);
+  //}
+
+  switch (event.object) {
+    case 'checkout.session':
+      const checkoutSessionCompleted = event;
+      // Handle the event as needed
       break;
-    case 'payment_method.attached':
-      const paymentMethod = event.data.object;
-      // Then define and call a method to handle the successful attachment of a PaymentMethod.
-      // handlePaymentMethodAttached(paymentMethod);
+    case 'payment_intent':
+      const paymentIntent = event;
+      // Handle the event as needed
+      break;
+    case 'payment_method':
+      const paymentMethod = event;
+      // Handle the event as needed
       break;
     default:
       // Unexpected event type
-      console.log(`Unhandled event type ${event.type}.`);
+      console.log(`Unhandled event type ${event.object}.`);
   }
 
   // Return a 200 response to acknowledge receipt of the event
