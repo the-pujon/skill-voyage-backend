@@ -126,10 +126,10 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
         case 'checkout.session.completed':
       const checkoutSessionCompleted = event.data.object;
       console.log('checkoutSessionCompleted ::::',checkoutSessionCompleted)
-      //await paymentSchema.findOneAndUpdate(
-      //  { sessionId: paymentIntent.id },
-      //  { $set: { paymentStatus: "success" } }
-      //);
+      await paymentSchema.findOneAndUpdate(
+        { sessionId: checkoutSessionCompleted.id },
+        { $set: { paymentStatus: "success" } }
+      );
       //await handlePaymentIntentSucceeded(checkoutSessionCompleted);
       // Then define and call a function to handle the event checkout.session.completed
       break;
