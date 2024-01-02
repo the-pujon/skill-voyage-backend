@@ -98,6 +98,7 @@ app.post("/api/checkout", async (req, res) => {
   await transaction.save();
 
   //res.json({ sessionId: session.id });
+  console.log( session.id)
 
   res.json({ id: session.id });
 });
@@ -125,13 +126,18 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
         case 'checkout.session.completed':
       const checkoutSessionCompleted = event.data.object;
       console.log('checkoutSessionCompleted ::::',checkoutSessionCompleted)
+      //await paymentSchema.findOneAndUpdate(
+      //  { sessionId: paymentIntent.id },
+      //  { $set: { paymentStatus: "success" } }
+      //);
       //await handlePaymentIntentSucceeded(checkoutSessionCompleted);
       // Then define and call a function to handle the event checkout.session.completed
       break;
         case 'payment_intent.succeeded':
           const paymentIntent = event.data.object;
-          //console.log("pay", paymentIntent)
+          console.log("pay", paymentIntent)
           console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
+          console.log(paymentIntent.id)
           // Then define and call a method to handle the successful payment intent.
           // handlePaymentIntentSucceeded(paymentIntent);
           break;
