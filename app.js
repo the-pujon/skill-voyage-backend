@@ -118,13 +118,19 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
 
     try {
       const event = stripe.webhooks.constructEvent(payloadString, header, secret);
-      console.log('event', event)
+      //console.log('event', event)
 
       console.log(event.type)
       switch (event.type) {
+        case 'checkout.session.completed':
+      const checkoutSessionCompleted = event.data.object;
+      console.log('checkoutSessionCompleted ::::',checkoutSessionCompleted)
+      //await handlePaymentIntentSucceeded(checkoutSessionCompleted);
+      // Then define and call a function to handle the event checkout.session.completed
+      break;
         case 'payment_intent.succeeded':
           const paymentIntent = event.data.object;
-          console.log("pay", paymentIntent)
+          //console.log("pay", paymentIntent)
           console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
           // Then define and call a method to handle the successful payment intent.
           // handlePaymentIntentSucceeded(paymentIntent);
