@@ -32,16 +32,6 @@ app.use(
 
 app.use(express.json());
 
-//app.use((req, res, next) => {
-//  if (req.originalUrl === "/webhook") {
-//      next(); // Do nothing with the body because I need it in a raw state.
-//  } else {
-//      express.json()(req, res, next); // ONLY do express.json() if the received request is NOT a WebHook from Stripe.
-//  }
-//});
-
-//app.use(require('body-parser').text({ type: "*/*" }));
-
 app.use("/api/users", userRouter);
 app.use("/api/instructors", instructorRouter);
 //app.use("/api/instructors", instructorRouter);
@@ -124,134 +114,21 @@ app.post(
             { sessionId: checkoutSessionCompleted.id },
             { $set: { paymentStatus: checkoutSessionCompleted.payment_status } }
           );
-          //await handlePaymentIntentSucceeded(checkoutSessionCompleted);
-          // Then define and call a function to handle the event checkout.session.completed
           break;
         default:
           // Unexpected event type
           console.log(`Unhandled event type ${event.type}.`);
       }
 
-      // Return a 200 response to acknowledge receipt of the event
       response.status(200).send();
     } catch (err) {
       console.error("Error verifying webhook signature:", err.message);
       response.status(400).send("Webhook Error: Invalid signature");
     }
 
-    //  const payload = {
-    //    id: 'evt_3OTp5dHkcuY3CefP0yxL006Q',
-    //    object: 'event',
-    //  };
-
-    //  const payloadString = JSON.stringify(payload, null, 2);
-    //  const secret = 'whsec_hzNvPm8XLBGPV2KJ9fo9e9H8KfmvOMyG';
-
-    //  const header = stripe.webhooks.generateTestHeaderString({
-    //    payload: payloadString,
-    //    secret,
-    //  });
-
-    //  console.log('Payload:', payload);
-    //console.log('Signature Header:', header);
-
-    //  const event = stripe.webhooks.constructEvent(payloadString, header, secret);
-
-    //  console.log(event)
-    //  console.log('Full Event:', JSON.stringify(event, null, 2));
-
-    //let event;
-    //// Only verify the event if you have an endpoint secret defined.
-    //// Otherwise use the basic event deserialized with JSON.parse
-    //if (endpointSecret) {
-    //  // Get the signature sent by Stripe
-    //  const signature = request.headers['stripe-signature'];
-    //  console.log(signature, 'dfs');
-    //  try {
-    //    // Parse the raw body manually
-    //    const rawBody = request.body;
-    //    event = stripe.webhooks.constructEvent(
-    //      rawBody,
-    //      signature,
-    //      endpointSecret
-    //    );
-    //    console.log(event);
-    //  } catch (err) {
-    //    console.log(`⚠️  Webhook signature verification failed.`, err.message);
-    //    return response.sendStatus(400);
-    //  }
-    //}
-
-    // Handle the event
-    //switch (event.type) {
-    //  case 'checkout.session.completed':
-    //    const checkoutSessionCompleted = event.data.object;
-    //    //await handlePaymentIntentSucceeded(checkoutSessionCompleted);
-    //    // Then define and call a function to handle the event checkout.session.completed
-    //    break;
-    //  case 'payment_intent.succeeded':
-    //    console.log("done");
-    //    const paymentIntent = event.data.object;
-
-    //    //await handlePaymentIntentSucceeded(paymentIntent);
-    //    //await paymentSchema.findOneAndUpdate(
-    //    //  { sessionId: paymentIntent.id },
-    //    //  { $set: { paymentStatus: "success" } }
-    //    //);
-
-    //    console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
-    //    // Then define and call a method to handle the successful payment intent.
-    //    // handlePaymentIntentSucceeded(paymentIntent);
-    //    break;
-    //  case 'payment_method.attached':
-    //    const paymentMethod = event.data.object;
-    //    // Then define and call a method to handle the successful attachment of a PaymentMethod.
-    //    // handlePaymentMethodAttached(paymentMethod);
-    //    break;
-    //  default:
-    //    // Unexpected event type
-    //    console.log(`Unhandled event type ${event.type}.`);
-    //}
-
-    //switch (event.object) {
-    //  case 'checkout.session':
-    //    const checkoutSessionCompleted = event;
-    //    // Handle the event as needed
-    //    break;
-    //  case 'payment_intent':
-    //    const paymentIntent = event;
-    //    // Handle the event as needed
-    //    break;
-    //  case 'payment_method':
-    //    const paymentMethod = event;
-    //    // Handle the event as needed
-    //    break;
-    //  default:
-    //    // Unexpected event type
-    //    console.log(`Unhandled event type ${event.object}.`);
-    //}
-
-    // Return a 200 response to acknowledge receipt of the event
     response.send();
   }
 );
-
-//async function handlePaymentIntentSucceeded(paymentIntent) {
-//  const { email, paymentStatus, products, totalItem, totalPrice:total } = paymentIntent.metadata; // Assuming you added metadata to the paymentIntent
-
-//  // Save payment information to the database
-//  const transaction = new paymentSchema({
-//    sessionId: paymentIntent.id,
-//    email,
-//    paymentStatus: "succeeded",
-//    courses: products,
-//    totalAmount:total
-//  });
-
-//  await transaction.save();
-
-//  console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
-//}
 
 //Home page
 app.get("/", (req, res) => {
