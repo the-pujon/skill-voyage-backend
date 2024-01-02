@@ -89,6 +89,8 @@ app.post("/api/checkout", async (req, res) => {
     cancel_url: "http://localhost:5173",
   });
 
+  console.log("session:::" , session)
+
   const transaction = new paymentSchema({
     sessionId: session.id,
     email,
