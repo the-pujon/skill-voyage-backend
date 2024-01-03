@@ -75,6 +75,7 @@ app.post("/api/checkout", async (req, res) => {
   const transaction = new paymentSchema({
     sessionId: session.id,
     email,
+    totalAmount:total,
     paymentStatus: session.payment_status,
     courses: products,
   });
