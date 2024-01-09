@@ -15,8 +15,8 @@ const {
 const {verifyAdmin, verifyJWT} = require('../middlewares/auth')
 
 // Define routes for instructors
-router.get("", getInstructors);
-router.post("/",verifyJWT, verifyAdmin, addInstructor);
+router.get("/", getInstructors);
+router.post("/",verifyJWT, addInstructor);
 router.get("/:email", getSingleInstructor);
 router.get("/:id", getSingleInstructor);
 router.put("/:email",verifyJWT,verifyAdmin, updateInstructor);

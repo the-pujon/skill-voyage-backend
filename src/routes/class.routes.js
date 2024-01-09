@@ -17,7 +17,7 @@ router.get("/", getAllClasses);
 router.post("/",verifyJWT, verifyInstructor, createClass);
 router.get("/:id", getClassById);
 router.put("/:id",verifyJWT, verifyAdmin, updateClassById);
-router.delete("/:id",verifyJWT, verifyInstructor, deleteClassById);
+router.delete("/:id",verifyJWT, verifyAdmin, deleteClassById);
 router.get("/email/:email", getClassByEmail);
 router.get("/category/:category", getClassesByCategory);
 

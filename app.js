@@ -50,6 +50,8 @@ app.post("/api/checkout", async (req, res) => {
 
   const { email, products, totalItem, totalPrice: total } = req.body;
 
+  console.log(total)
+
   console.log(req.body.products);
 
   const lineItems = products.map((product) => ({

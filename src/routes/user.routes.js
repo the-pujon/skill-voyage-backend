@@ -13,7 +13,7 @@ const {verifyAdmin, verifyJWT, verifyInstructor} = require('../middlewares/auth'
 router.get("/", verifyJWT, getAllUsers);
 router.get("/:email",verifyJWT, getSingleUser);
 router.post("/", createUser);
-router.patch("/:email",verifyJWT, verifyAdmin, updateUser);
+router.put("/:email",verifyJWT, verifyAdmin, updateUser);
 router.delete("/:email", verifyJWT,verifyAdmin, deleteUser);
 router.post("/jwt", getJwtToken);
 
