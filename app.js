@@ -38,8 +38,6 @@ app.use("/api/instructors", instructorRouter);
 app.use("/api/courses", classRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/categories", categoryRouter);
-const EventEmitter = require("eventemitter3");
-const paymentEmitter = new EventEmitter();
 
 const stripe = require("stripe")(
   "sk_test_51NIBhSHkcuY3CefPtCDm0U2OqEDR0xw4sy8FYyE0RAbMPGiywA7JZEzHHRKCIkQLQCcYbbRaknwJzrsX9SMPFtTM005QeFR5yA"
@@ -52,7 +50,7 @@ app.post("/api/checkout", async (req, res) => {
 
   const { email, products, totalItem, totalPrice: total } = req.body;
 
-  console.log(total);
+  console.log(total)
 
   console.log(req.body.products);
 
@@ -72,14 +70,14 @@ app.post("/api/checkout", async (req, res) => {
     payment_method_types: ["card"],
     line_items: lineItems,
     mode: "payment",
-    success_url: "http://localhost:5173",
+    success_url: "http://localhost:5173/paid",
     cancel_url: "http://localhost:5173",
   });
 
   const transaction = new paymentSchema({
     sessionId: session.id,
     email,
-    totalAmount: total,
+    totalAmount:total,
     paymentStatus: session.payment_status,
     courses: products,
   });
@@ -119,16 +117,6 @@ app.post(
             { sessionId: checkoutSessionCompleted.id },
             { $set: { paymentStatus: checkoutSessionCompleted.payment_status } }
           );
-          //paymentEmitter.emit('successfulPayment', checkoutSessionCompleted.id);
-          const successfulPaymentData = { paymentStatus: "paid" };
-          // Replace "http://your-frontend-url/successful-payment" with the actual URL of your frontend endpoint
-          fetch("http://localhost:5173/paid", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(successfulPaymentData),
-          });
           break;
         default:
           // Unexpected event type
