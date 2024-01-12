@@ -38,6 +38,8 @@ app.use("/api/instructors", instructorRouter);
 app.use("/api/courses", classRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/categories", categoryRouter);
+const EventEmitter = require('eventemitter3');
+const paymentEmitter = new EventEmitter();
 
 const stripe = require("stripe")(
   "sk_test_51NIBhSHkcuY3CefPtCDm0U2OqEDR0xw4sy8FYyE0RAbMPGiywA7JZEzHHRKCIkQLQCcYbbRaknwJzrsX9SMPFtTM005QeFR5yA"
@@ -117,6 +119,7 @@ app.post(
             { sessionId: checkoutSessionCompleted.id },
             { $set: { paymentStatus: checkoutSessionCompleted.payment_status } }
           );
+          paymentEmitter.emit('successfulPayment', checkoutSessionCompleted.id);
           break;
         default:
           // Unexpected event type
