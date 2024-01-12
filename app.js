@@ -12,7 +12,7 @@ const paymentSchema = require("./src/model/payment.schema");
 
 const app = express();
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: `${process.env.FRONTEND_URL}`,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
   optionsSuccessStatus: 204,
