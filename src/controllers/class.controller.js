@@ -93,15 +93,6 @@ exports.getClassByEmail = async (req, res) => {
   }
 };
 
-// Get classes by category
-//exports.getClassesByCategory = async (req, res) => {
-//  try {
-//    const classes = await Class.find({ classCategory: req.params.category });
-//    res.json(classes);
-//  } catch (error) {
-//    res.status(500).json({ message: 'Error fetching classes', error: error.message });
-//  }
-//};
 
 // Get classes by category, with optional subcategory
 exports.getClassesByCategory = async (req, res) => {

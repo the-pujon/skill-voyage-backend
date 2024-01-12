@@ -39,20 +39,15 @@ app.use("/api/courses", classRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/categories", categoryRouter);
 
-const stripe = require("stripe")(
-  "sk_test_51NIBhSHkcuY3CefPtCDm0U2OqEDR0xw4sy8FYyE0RAbMPGiywA7JZEzHHRKCIkQLQCcYbbRaknwJzrsX9SMPFtTM005QeFR5yA"
-);
+
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 // checkout api
 app.post("/api/checkout", async (req, res) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:5173");
+  res.header("Access-Control-Allow-Origin", `${process.env.FRONTEND_URL}`);
   res.header("Access-Control-Allow-Credentials", true);
 
   const { email, products, totalItem, totalPrice: total } = req.body;
-
-  console.log(total)
-
-  console.log(req.body.products);
 
   const lineItems = products.map((product) => ({
     price_data: {
@@ -70,8 +65,8 @@ app.post("/api/checkout", async (req, res) => {
     payment_method_types: ["card"],
     line_items: lineItems,
     mode: "payment",
-    success_url: "http://localhost:5173/paid",
-    cancel_url: "http://localhost:5173",
+    success_url: `${process.env.FRONTEND_URL}/paid`,
+    cancel_url: `${process.env.FRONTEND_URL}`,
   });
 
   const transaction = new paymentSchema({
@@ -85,7 +80,6 @@ app.post("/api/checkout", async (req, res) => {
   res.json({ id: session.id });
 });
 
-const endpointSecret = "whsec_hzNvPm8XLBGPV2KJ9fo9e9H8KfmvOMyG";
 app.post(
   "/webhook",
   bodyParser.raw({ type: "application/json" }),
@@ -93,7 +87,7 @@ app.post(
     const payload = request.body;
     const sig = request.headers["stripe-signature"];
     const payloadString = JSON.stringify(payload, null, 2);
-    const secret = "whsec_hzNvPm8XLBGPV2KJ9fo9e9H8KfmvOMyG";
+    const secret = process.env.STRIPE_ENDPOINT_SECRET;
     const header = stripe.webhooks.generateTestHeaderString({
       payload: payloadString,
       secret,
@@ -109,10 +103,6 @@ app.post(
       switch (event.type) {
         case "checkout.session.completed":
           const checkoutSessionCompleted = event.data.object;
-          console.log(
-            "checkoutSessionCompleted ::::",
-            checkoutSessionCompleted
-          );
           await paymentSchema.findOneAndUpdate(
             { sessionId: checkoutSessionCompleted.id },
             { $set: { paymentStatus: checkoutSessionCompleted.payment_status } }

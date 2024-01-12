@@ -11,7 +11,7 @@ const paymentSchema = new mongoose.Schema({
     required: true,
   },
   totalAmount: {
-    type: mongoose.Schema.Types.Mixed, // or specify String/Number based on your requirements
+    type: mongoose.Schema.Types.Mixed,
     required: false,
   },
   courses: [],
@@ -20,8 +20,6 @@ const paymentSchema = new mongoose.Schema({
     type: String,
     default: Date.now
   },
-  // Add other payment-related fields as needed
 });
 
-// Create a model from the schema
 module.exports = mongoose.model("Payment", paymentSchema);

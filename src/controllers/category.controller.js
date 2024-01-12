@@ -75,11 +75,8 @@ const categoryController={
 
 
     createSubCategory: async (req,res) => {
-        console.log(req.body);
-        console.log(req.params);
         try {
             const category=await Category.findById(req.params.categoryId);
-            console.log(category);
             if(!category) {
                 return res.status(404).json({error: 'Category not found'});
             }
