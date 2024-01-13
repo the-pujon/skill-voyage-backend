@@ -96,7 +96,7 @@ This is the backend codebase for a Skills Voyage
 
 Click [here](https://skills-voyage-elm.netlify.app/) to view the Skills Voyage project.
 
-For Frontend, click [here](#https://github.com/the-pujon/skill-voyage-frontend).
+For Frontend, click [here](https://github.com/the-pujon/skill-voyage-frontend).
 
 ---
 
